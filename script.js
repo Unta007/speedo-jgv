@@ -30,7 +30,7 @@ function setSpeed(speed) {
 
 /**
  * Updates the RPM (Revolutions Per Minute) display.
- * @param {number} rpm - The RPM value to display.
+ * @param {number} rpm - The RPM value to display. (0 to 1).
  */
 function setRPM(rpm) {
     elements.rpm.innerText = `${rpm.toFixed(4)} RPM`;
@@ -54,10 +54,10 @@ function setHealth(health) {
 
 /**
  * Updates the current gear display.
- * @param {string|number} gear - The current gear to display.
+ * @param {number} gear - The current gear to display. 0 represents neutral/reverse.
  */
 function setGear(gear) {
-    elements.gear.innerText = gear;
+    elements.gear.innerText = String(gear);
 }
 
 /**

@@ -17,7 +17,7 @@ Updates the speed display based on the current speed mode.
 #### `setRPM(rpm)`
 Updates the RPM (Revolutions Per Minute) display.
 - **Parameters:**
-  - `rpm` (number): The RPM value to display.
+  - `rpm` (number): The RPM value to display (0 to 1).
 
 #### `setFuel(fuel)`
 Updates the fuel level display as a percentage.
@@ -32,7 +32,7 @@ Updates the vehicle health display as a percentage.
 #### `setGear(gear)`
 Updates the current gear display.
 - **Parameters:**
-  - `gear` (string|number): The current gear to display.
+  - `gear` (string|number): The current gear to display (0 represents neutral/reverse).
 
 #### `setHeadlights(state)`
 Updates the headlights status display.
