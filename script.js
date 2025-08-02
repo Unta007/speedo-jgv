@@ -1,130 +1,178 @@
 let elements = {};
-let speedMode = 1;
+let speedMode = 0;
 let indicators = 0;
-
-const onOrOff = state => state ? 'On' : 'Off';
 
 /**
  * Updates the display of the engine state.
- *
- * @param {boolean} state If true, the engine is on; otherwise, it is off.
- * @description Sets the engine state display based on the provided boolean state.
+ * @param {boolean} state If true, the engine is on.
  */
 function setEngine(state) {
-    elements.engine.innerText = onOrOff(state);
+    elements.engineIndicator.classList.toggle('active', state);
 }
 
 /**
- * Updates the speed display based on the current speed mode.
- * @param {number} speed - The speed value in meters per second (m/s).
- * @description Converts the speed value to the current speed mode and updates the display.
+ * Updates the speed display and gauge.
+ * @param {number} speed The speed value in meters per second (m/s).
  */
 function setSpeed(speed) {
-    switch(speedMode)
-    {
-        case 1: speed = elements.speed.innerText = `${Math.round(speed * 2.236936)} MPH`; break; // MPH
-        case 2: speed = elements.speed.innerText = `${Math.round(speed * 1.943844)} Knots`; break; // Knots
-        default: speed = elements.speed.innerText = `${Math.round(speed * 3.6)} KMH`; // KMH
+    let displaySpeed;
+    let maxSpeed = 300; // Default max speed in KMH
+
+    switch (speedMode) {
+        case 1: // MPH
+            displaySpeed = Math.round(speed * 2.236936);
+            maxSpeed = 200;
+            break;
+        case 2: // Knots
+            displaySpeed = Math.round(speed * 1.943844);
+            maxSpeed = 150;
+            break;
+        default: // KMH
+            displaySpeed = Math.round(speed * 3.6);
+            maxSpeed = 300;
+    }
+
+    elements.speed.innerText = displaySpeed;
+
+    const speedPercent = Math.min(displaySpeed / maxSpeed, 1);
+    const rotation = speedPercent * 180 - 180;
+    elements.speedFill.style.transform = `rotate(${rotation}deg)`;
+}
+
+/**
+ * Updates the fuel level display.
+ * @param {number} fuel The fuel level from 0.0 to 1.0.
+ */
+function setFuel(fuel) {
+    const fuelPercent = Math.max(0, Math.min(1, fuel)) * 100;
+
+    elements.fuelFill.style.width = `${fuelPercent}%`;
+    elements.fuelFill.classList.remove('fuel-low', 'fuel-critical');
+
+    if (fuelPercent <= 15) {
+        elements.fuelFill.classList.add('fuel-critical');
+    } else if (fuelPercent <= 30) {
+        elements.fuelFill.classList.add('fuel-low');
     }
 }
 
 /**
- * Updates the RPM (Revolutions Per Minute) display.
- * @param {number} rpm - The RPM value to display. (0 to 1).
- */
-function setRPM(rpm) {
-    elements.rpm.innerText = `${rpm.toFixed(4)} RPM`;
-}
-
-/**
- * Updates the fuel level display as a percentage.
- * @param {number} fuel - The fuel level (0 to 1).
- */
-function setFuel(fuel) {
-    elements.fuel.innerText = `${(fuel * 100).toFixed(1)}%`;
-}
-
-/**
- * Updates the vehicle health display as a percentage.
- * @param {number} health - The vehicle health level (0 to 1).
+ * Updates the vehicle health display.
+ * @param {number} health The vehicle health level from 0.0 to 1.0.
  */
 function setHealth(health) {
-    elements.health.innerText = `${(health * 100).toFixed(1)}%`;
+    const healthPercent = Math.max(0, Math.min(1, health)) * 100;
+
+    elements.healthFill.style.width = `${healthPercent}%`;
+    elements.healthFill.classList.remove('health-damaged', 'health-critical');
+
+    if (healthPercent <= 30) {
+        elements.healthFill.classList.add('health-critical');
+    } else if (healthPercent <= 60) {
+        elements.healthFill.classList.add('health-damaged');
+    }
 }
 
 /**
  * Updates the current gear display.
- * @param {number} gear - The current gear to display. 0 represents neutral/reverse.
+ * @param {string|number} gear The current gear.
  */
 function setGear(gear) {
-    elements.gear.innerText = String(gear);
+    if (gear === 0) {
+        elements.gear.innerText = 'R';
+    } else if (gear === -1) {
+        elements.gear.innerText = 'N';
+    } else {
+        elements.gear.innerText = String(gear);
+    }
 }
 
 /**
  * Updates the headlights status display.
- * @param {number} state - The headlight state (0: Off, 1: On, 2: High Beam).
+ * @param {number} state 0: Off, 1: On, 2: High Beam.
  */
 function setHeadlights(state) {
-    switch(state)
-    {
-        case 1: elements.headlights.innerText = 'On'; break;
-        case 2: elements.headlights.innerText = 'High Beam'; break;
-        default: elements.headlights.innerText = 'Off';
+    const indicator = elements.headlightsIndicator;
+    const icon = indicator.querySelector('i');
+    indicator.classList.remove('active', 'high-beam');
+    icon.className = 'fa-solid fa-lightbulb';
+
+    switch (state) {
+        case 1: // Low beam
+            indicator.classList.add('active');
+            break;
+        case 2: // High beam
+            indicator.classList.add('active', 'high-beam');
+            icon.className = 'fa-solid fa-sun';
+            break;
     }
 }
 
 /**
- * Sets the state of the left turn indicator and updates the display.
- * @param {boolean} state - If true, turns the left indicator on; otherwise, turns it off.
+ * Sets the state of the left turn indicator.
+ * @param {boolean} state If true, turns the left indicator on.
  */
 function setLeftIndicator(state) {
     indicators = (indicators & 0b10) | (state ? 0b01 : 0b00);
-    elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
+    updateTurnIndicators();
 }
 
 /**
- * Sets the state of the right turn indicator and updates the display.
- * @param {boolean} state - If true, turns the right indicator on; otherwise, turns it off.
+ * Sets the state of the right turn indicator.
+ * @param {boolean} state If true, turns the right indicator on.
  */
 function setRightIndicator(state) {
     indicators = (indicators & 0b01) | (state ? 0b10 : 0b00);
-    elements.indicators.innerText = `${indicators & 0b01 ? 'On' : 'Off'} / ${indicators & 0b10 ? 'On' : 'Off'}`;
+    updateTurnIndicators();
+}
+
+/**
+ * Updates the visual state of both turn indicators based on the bitmask.
+ */
+function updateTurnIndicators() {
+    const leftOn = (indicators & 0b01) > 0;
+    const rightOn = (indicators & 0b10) > 0;
+    elements.leftTurnIndicator.classList.toggle('active', leftOn);
+    elements.rightTurnIndicator.classList.toggle('active', rightOn);
 }
 
 /**
  * Updates the seatbelt status display.
- * @param {boolean} state - If true, indicates seatbelts are fastened; otherwise, indicates they are not.
+ * @param {boolean} state If true, seatbelts are fastened.
  */
 function setSeatbelts(state) {
-    elements.seatbelts.innerText = onOrOff(state);
+    elements.seatbeltIndicator.classList.toggle('active', state);
 }
 
-/**
- * Sets the speed display mode and updates the speed unit display.
- * @param {number} mode - The speed mode to set (0: KMH, 1: MPH, 2: Knots).
- */
-function setSpeedMode(mode) {
-    speedMode = mode;
-    switch(mode)
-    {
-        case 1: elements.speedMode.innerText = 'MPH'; break;
-        case 2: elements.speedMode.innerText = 'Knots'; break;
-        default: elements.speedMode.innerText = 'KMH';
-    }
-}
-
-// Wait for the DOM to be fully loaded
+// Initialize elements when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     elements = {
-        engine: document.getElementById('engine'),
         speed: document.getElementById('speed'),
-        rpm: document.getElementById('rpm'),
-        fuel: document.getElementById('fuel'),
-        health: document.getElementById('health'),
+        speedFill: document.getElementById('speed-fill'),
+        fuelFill: document.getElementById('fuel-fill'),
+        healthFill: document.getElementById('health-fill'),
         gear: document.getElementById('gear'),
-        headlights: document.getElementById('headlights'),
-        indicators: document.getElementById('indicators'),
-        seatbelts: document.getElementById('seatbelts'),
-        speedMode: document.getElementById('speed-mode'),
+        engineIndicator: document.getElementById('engine-indicator'),
+        headlightsIndicator: document.getElementById('headlights-indicator'),
+        leftTurnIndicator: document.getElementById('left-turn-indicator'),
+        rightTurnIndicator: document.getElementById('right-turn-indicator'),
+        seatbeltIndicator: document.getElementById('seatbelt-indicator'),
     };
+
+    // Demo animation dengan nilai sesuai dokumentasi
+    setTimeout(() => {
+        setEngine(true);
+        setSpeed(66.3);       // Kecepatan 33.3 m/s (sekitar 120 km/h)
+        setFuel(0.75);        // Bensin 75%
+        setHealth(0.85);      // Kondisi 85%
+        setGear(4);
+        setHeadlights(2);     // Coba mode lampu sorot
+        setSeatbelts(false);  // Coba mode sabuk pengaman tidak terpasang
+    }, 1500);
+
+    // Demo turn indicator
+    setTimeout(() => {
+        setLeftIndicator(true);
+        setTimeout(() => setLeftIndicator(false), 3000);
+    }, 4000);
 });

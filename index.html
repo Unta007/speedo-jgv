@@ -1,42 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Speedometer Template</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <main class="speedometer">
-        <section>
-            <dl>
-                <dt>Engine</dt>
-                <dd id="engine">&nbsp;</dd>
-                <dt>Speed</dt>
-                <dd id="speed">&nbsp;</dd>
-                <dt>RPM</dt>
-                <dd id="rpm">&nbsp;</dd>
-                <dt>Fuel</dt>
-                <dd id="fuel">&nbsp;</dd>
-                <dt>Health</dt>
-                <dd id="health">&nbsp;</dd>
-            </dl>
-        </section>
-        <section>
-            <dl>
-                <dt>Gear</dt>
-                <dd id="gear">&nbsp;</dd>
-                <dt>Headlights</dt>
-                <dd id="headlights">&nbsp;</dd>
-                <dt>Indicators</dt>
-                <dd id="indicators">&nbsp;</dd>
-                <dt>Seatbelts</dt>
-                <dd id="seatbelts">&nbsp;</dd>
-                <dt>Speed Mode</dt>
-                <dd id="speed-mode">&nbsp;</dd>
-            </dl>
-        </section>
+
+        <div class="gauges-container">
+            <div class="speed-gauge">
+                <div class="gauge-bg">
+                    <div class="gauge-fill" id="speed-fill"></div>
+                </div>
+                <div class="gauge-text" id="speed">0</div>
+            </div>
+
+            <div class="fuel-gauge">
+                <i class="fa-solid fa-gas-pump gauge-icon"></i>
+                <div class="gauge-bg">
+                    <div class="gauge-fill" id="fuel-fill"></div>
+                </div>
+            </div>
+
+            <div class="health-gauge">
+                <i class="fa-solid fa-wrench gauge-icon"></i>
+                <div class="gauge-bg">
+                    <div class="gauge-fill" id="health-fill"></div>
+                </div>
+            </div>
+
+            <div class="center-info">
+                <div class="gear-display" id="gear">P</div>
+            </div>
+        </div>
+
+        <div class="indicators-row">
+            <div class="indicator left-turn" id="left-turn-indicator" title="Left Turn">
+                <i class="fa-solid fa-arrow-left"></i>
+            </div>
+            <div class="indicator engine" id="engine-indicator" title="Engine On">
+                <i class="fa-solid fa-car-on"></i>
+            </div>
+            <div class="indicator headlights" id="headlights-indicator" title="Headlights">
+                <i class="fa-solid fa-lightbulb"></i>
+            </div>
+            <div class="indicator seatbelt" id="seatbelt-indicator" title="Seatbelt">
+                <i class="fa-solid fa-user-slash"></i>
+            </div>
+            <div class="indicator right-turn" id="right-turn-indicator" title="Right Turn">
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
+        </div>
     </main>
-    <script src="/script.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>

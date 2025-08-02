@@ -1,48 +1,337 @@
 * {
     user-select: none;
     user-drag: none;
+    box-sizing: border-box;
 }
 
 body {
     background-color: transparent !important;
-    font-family: Arial, sans-serif;
-    font-size: 11pt;
-}
-
-main {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
-
-    width: 250px;
-    display: flex;
-    flex-direction: row;
-    background-color: #000000AA;
-    color: white;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-section {
-    width: 125px
-}
-
-dl {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
+    padding: 0;
+    color: white;
 }
 
-dt {
+.speedometer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 220px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.9), rgba(20, 20, 20, 0.8));
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 140px 140px 20px 20px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Half-circle gauges container */
+.gauges-container {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    margin-bottom: 10px;
+}
+
+/* Speed gauge (larger, left side) */
+.speed-gauge {
+    position: absolute;
+    left: 1px;
+    width: 177px;
+    height: 175px;
+}
+
+/* Fuel & Health progress bars */
+.fuel-gauge,
+.health-gauge {
+    left: 1px;
+    position: absolute;
+    width: 178px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fuel-gauge {
+    top: 95px;
+    height: 10px;
+}
+
+.health-gauge {
+    top: 113px;
+}
+
+.gauge {
+    position: relative;
+}
+
+.gauge-icon {
+    font-size: 13px;
+    color: #bdbdbd;
+    flex-shrink: 0;
+    /* Mencegah ikon menyusut */
+}
+
+/* Speed gauge styling */
+.speed-gauge .gauge-bg {
+    width: 100%;
+    height: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-bottom: none;
+    border-radius: 100px 100px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.speed-gauge .gauge-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(from 180deg,
+            #1e40af20 0deg,
+            /* Biru transparan */
+            #1e40af40 45deg,
+            #1e40af60 90deg,
+            #1e40af80 135deg,
+            #1e40af97 180deg
+            /* Biru solid */
+        );
+    border-radius: 100px 100px 0 0;
+    transform-origin: bottom center;
+    transition: transform 0.3s ease;
+    clip-path: polygon(0 100%, 0 0, 100% 0, 100% 100%);
+}
+
+/* Fuel & Health bar styling */
+.fuel-gauge .gauge-bg,
+.health-gauge .gauge-bg {
+    flex-grow: 1;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.fuel-gauge .gauge-fill,
+.health-gauge .gauge-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    border-radius: 10px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    width: 100%;
+}
+
+.fuel-gauge .gauge-fill.fuel-low {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.fuel-gauge .gauge-fill.fuel-critical {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+    animation: pulse-bar 1s infinite;
+}
+
+.health-gauge .gauge-fill.health-damaged {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.health-gauge .gauge-fill.health-critical {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+    animation: pulse-bar 1s infinite;
+}
+
+@keyframes pulse-bar {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+.gauge-text {
+    position: absolute;
+    top: 35px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
     font-weight: bold;
 }
 
-dt::after {
-    content: ":";
+.speed-gauge .gauge-text {
+    font-size: 30px;
+    color: #ffffff;
 }
 
-dd {
-    margin: 0;
+.fuel-gauge .gauge-text {
+    font-size: 14px;
+    color: #22c55e;
+    bottom: -25px;
 }
 
-dd:not(:last-child) {
-    margin-bottom: 5px;
+/* Center info display */
+.center-info {
+    position: absolute;
+    top: 34%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+}
+
+.gear-display {
+    font-size: 13px;
+    font-weight: bold;
+    color: #6cb8ff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 35px;
+}
+
+/* Indicators row */
+.indicators-row {
+    gap: 5px;
+    display: flex;
+    justify-content: center;
+    margin-top: 17px;
+}
+
+.indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.indicator i {
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.indicator.active {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+/* Specific indicator colors when active */
+.indicator.engine.active {
+    background: rgba(34, 197, 94, 0.3);
+    border-color: #22c55e;
+    color: #22c55e;
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+}
+
+.indicator.headlights.active {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: #3b82f6;
+    color: #3b82f6;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+.indicator.headlights.high-beam {
+    background: rgba(147, 197, 253, 0.4);
+    border-color: #93c5fd;
+    color: #93c5fd;
+    box-shadow: 0 0 20px rgba(147, 197, 253, 0.7);
+}
+
+.indicator.left-turn.active,
+.indicator.right-turn.active {
+    background: rgba(251, 191, 36, 0.3);
+    border-color: #fbbf24;
+    color: #fbbf24;
+    animation: blink 1s infinite;
+}
+
+.indicator.seatbelt.active {
+    background: rgba(34, 197, 94, 0.3);
+    border-color: #22c55e;
+    color: #22c55e;
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+}
+
+.indicator.seatbelt:not(.active) {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: #ef4444;
+    color: #ef4444;
+    animation: pulse 2s infinite;
+}
+
+.indicator.health.damaged {
+    background: rgba(251, 191, 36, 0.3);
+    border-color: #fbbf24;
+    color: #fbbf24;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+}
+
+.indicator.health.critical {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: #ef4444;
+    color: #ef4444;
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+
+@keyframes blink {
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    51%,
+    100% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 400px) {
+    .speedometer {
+        width: 250px;
+        right: 10px;
+        bottom: 10px;
+    }
 }
