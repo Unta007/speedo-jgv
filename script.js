@@ -158,21 +158,4 @@ document.addEventListener('DOMContentLoaded', () => {
         rightTurnIndicator: document.getElementById('right-turn-indicator'),
         seatbeltIndicator: document.getElementById('seatbelt-indicator'),
     };
-
-    // Demo animation dengan nilai sesuai dokumentasi
-    setTimeout(() => {
-        setEngine(true);
-        setSpeed(66.3);       // Kecepatan 33.3 m/s (sekitar 120 km/h)
-        setFuel(0.75);        // Bensin 75%
-        setHealth(0.85);      // Kondisi 85%
-        setGear(4);
-        setHeadlights(2);     // Coba mode lampu sorot
-        setSeatbelts(false);  // Coba mode sabuk pengaman tidak terpasang
-    }, 1500);
-
-    // Demo turn indicator
-    setTimeout(() => {
-        setLeftIndicator(true);
-        setTimeout(() => setLeftIndicator(false), 3000);
-    }, 4000);
 });
